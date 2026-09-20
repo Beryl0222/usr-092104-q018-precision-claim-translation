@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "精准医学主张转化领域事件",
+  "type": "object",
+  "required": [
+    "event_id",
+    "event_type",
+    "aggregate_type",
+    "aggregate_id",
+    "occurred_at",
+    "version",
+    "summary"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "DATA_AUTHORIZED",
+        "ANALYSIS_FROZEN",
+        "CLAIM_PROPOSED",
+        "EVIDENCE_PROMOTED",
+        "USE_APPROVED"
+      ]
+    },
+    "aggregate_type": {
+      "type": "string",
+      "enum": [
+        "omics_release",
+        "analysis_run",
+        "evidence_claim",
+        "use_decision"
+      ]
+    },
+    "aggregate_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "occurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "additionalProperties": true
+}
