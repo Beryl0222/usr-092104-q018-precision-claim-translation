@@ -1,56 +1,309 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "精准医学主张转化领域事件",
+  "description": "领域事件信封与按事件类型的 payload 约定。可执行校验见 src/validator.js，语义说明见 docs/claim-maturity.md。",
   "type": "object",
-  "required": [
-    "event_id",
-    "event_type",
-    "aggregate_type",
-    "aggregate_id",
-    "occurred_at",
-    "version",
-    "summary"
-  ],
+  "required": ["event_id", "event_type", "aggregate_type", "aggregate_id", "occurred_at", "version", "summary"],
   "properties": {
-    "event_id": {
-      "type": "string",
-      "minLength": 1
-    },
-    "event_type": {
-      "type": "string",
-      "enum": [
-        "DATA_AUTHORIZED",
-        "ANALYSIS_FROZEN",
-        "CLAIM_PROPOSED",
-        "EVIDENCE_PROMOTED",
-        "USE_APPROVED"
-      ]
-    },
-    "aggregate_type": {
-      "type": "string",
-      "enum": [
-        "omics_release",
-        "analysis_run",
-        "evidence_claim",
-        "use_decision"
-      ]
-    },
-    "aggregate_id": {
-      "type": "string",
-      "minLength": 1
-    },
-    "occurred_at": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "version": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "summary": {
-      "type": "string",
-      "minLength": 1
+    "event_id": { "type": "string", "minLength": 1 },
+    "event_type": { "$ref": "#/$defs/eventType" },
+    "aggregate_type": { "$ref": "#/$defs/aggregateType" },
+    "aggregate_id": { "type": "string", "minLength": 1 },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "version": { "type": "integer", "minimum": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "payload": {
+      "type": "object",
+      "description": "事件内容，必需字段随 event_type 而定（见 allOf 条件）。",
+      "properties": {
+        "links": { "$ref": "#/$defs/links" },
+        "statement": { "type": "string", "minLength": 1 },
+        "maturity": { "$ref": "#/$defs/maturity" },
+        "promoted_from": { "$ref": "#/$defs/maturity" },
+        "promoted_to": { "$ref": "#/$defs/maturity" },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "intended_use": { "$ref": "#/$defs/intendedUse" },
+        "signer": {
+          "type": "object",
+          "required": ["staff_id", "role"],
+          "properties": {
+            "staff_id": { "type": "string", "minLength": 1 },
+            "role": {
+              "enum": [
+                "researcher",
+                "educator",
+                "licensed_physician",
+                "clinical_governance_board",
+                "data_governance_officer"
+              ]
+            }
+          },
+          "additionalProperties": true
+        },
+        "applicable_population": { "type": "string", "minLength": 1 },
+        "claim_ref": { "$ref": "#/$defs/link" },
+        "claim_id": { "type": "string", "minLength": 1 },
+        "claim_version": { "type": "integer", "minimum": 1 },
+        "signed_claim_version": { "type": "integer", "minimum": 1 },
+        "statement_use": { "$ref": "#/$defs/intendedUse" },
+        "de_identified": { "type": "boolean" },
+        "course_id": { "type": "string" },
+        "open_questions": { "type": "array", "items": { "type": "string" } },
+        "reason": { "type": "string", "minLength": 1 },
+        "affected_claim_ids": { "type": "array", "items": { "type": "string" } },
+        "affected_course_ids": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
     }
   },
+  "$defs": {
+    "eventType": {
+      "enum": [
+        "CONSENT_GRANTED",
+        "CONSENT_WITHDRAWN",
+        "DATA_AUTHORIZED",
+        "DATA_WITHDRAWN",
+        "ANALYSIS_FROZEN",
+        "MODEL_VERSIONED",
+        "CELL_SUBSET_DEFINED",
+        "CELL_SUBSET_REANNOTATED",
+        "TARGET_PROPOSED",
+        "MECHANISM_TESTED",
+        "CLINICAL_STUDY_RECORDED",
+        "STRATIFICATION_RULE_SET",
+        "CLAIM_PROPOSED",
+        "CLAIM_PROMOTED",
+        "EVIDENCE_PROMOTED",
+        "CLAIM_WITHDRAWN",
+        "USE_APPROVED",
+        "STATEMENT_PUBLISHED",
+        "STATEMENT_RETRACTED"
+      ]
+    },
+    "aggregateType": {
+      "enum": [
+        "consent_grant",
+        "omics_release",
+        "analysis_run",
+        "cell_subset",
+        "target_candidate",
+        "mechanism_experiment",
+        "clinical_study",
+        "stratification_rule",
+        "evidence_claim",
+        "use_decision",
+        "external_statement"
+      ]
+    },
+    "maturity": {
+      "enum": [
+        "HYPOTHESIS",
+        "SINGLE_CELL_ASSOCIATION",
+        "MECHANISTIC_SUPPORT",
+        "CLINICAL_EVIDENCE",
+        "ACTIONABLE"
+      ]
+    },
+    "intendedUse": { "enum": ["research", "education", "clinical"] },
+    "link": {
+      "type": "object",
+      "required": ["type", "id"],
+      "properties": {
+        "type": { "$ref": "#/$defs/aggregateType" },
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "links": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/link" }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "event_type": { "const": "CONSENT_GRANTED" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "consent_grant" },
+          "payload": { "required": ["donor_ref", "allowed_uses"], "properties": { "allowed_uses": { "type": "array", "items": { "$ref": "#/$defs/intendedUse" }, "minItems": 1 } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "CONSENT_WITHDRAWN" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "consent_grant" },
+          "payload": { "required": ["reason", "affected_claim_ids", "affected_course_ids"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "DATA_AUTHORIZED" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "omics_release" },
+          "payload": { "required": ["data_type", "release_version", "links"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "DATA_WITHDRAWN" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "omics_release" },
+          "payload": { "required": ["reason", "affected_claim_ids", "affected_course_ids"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "ANALYSIS_FROZEN" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "analysis_run" },
+          "payload": { "required": ["pipeline", "model_version", "links"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "MODEL_VERSIONED" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "analysis_run" },
+          "payload": {
+            "required": ["new_model_version", "previous_model_version", "affected_claim_ids", "affected_course_ids", "links"]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "CELL_SUBSET_DEFINED" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "cell_subset" },
+          "payload": { "required": ["annotation", "links"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "CELL_SUBSET_REANNOTATED" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "cell_subset" },
+          "payload": {
+            "required": ["annotation", "previous_version", "affected_claim_ids", "affected_course_ids", "links"]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "TARGET_PROPOSED" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "target_candidate" },
+          "payload": { "required": ["symbol", "links"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "MECHANISM_TESTED" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "mechanism_experiment" },
+          "payload": {
+            "required": ["assay", "finding", "links"],
+            "properties": { "finding": { "enum": ["supports", "refutes", "inconclusive"] } }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "CLINICAL_STUDY_RECORDED" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "clinical_study" },
+          "payload": { "required": ["study_ref", "population", "result_summary", "links"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "STRATIFICATION_RULE_SET" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "stratification_rule" },
+          "payload": { "required": ["rule_version", "definition", "links"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "CLAIM_PROPOSED" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "evidence_claim" },
+          "payload": { "required": ["statement", "maturity"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "enum": ["CLAIM_PROMOTED", "EVIDENCE_PROMOTED"] } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "evidence_claim" },
+          "payload": { "required": ["promoted_from", "promoted_to", "reviewer"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "CLAIM_WITHDRAWN" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "evidence_claim" },
+          "payload": { "required": ["reason", "affected_claim_ids", "affected_course_ids"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "USE_APPROVED" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "use_decision" },
+          "payload": {
+            "required": ["intended_use", "signer", "claim_ref"],
+            "properties": { "intended_use": { "$ref": "#/$defs/intendedUse" } }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "STATEMENT_PUBLISHED" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "external_statement" },
+          "payload": {
+            "required": [
+              "course_id",
+              "title",
+              "statement_use",
+              "claim_id",
+              "claim_version",
+              "signed_claim_version",
+              "de_identified",
+              "links"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "STATEMENT_RETRACTED" } }, "required": ["event_type"] },
+      "then": {
+        "properties": {
+          "aggregate_type": { "const": "external_statement" },
+          "payload": { "required": ["reason", "affected_claim_ids", "affected_course_ids"] }
+        }
+      }
+    }
+  ],
   "additionalProperties": true
 }

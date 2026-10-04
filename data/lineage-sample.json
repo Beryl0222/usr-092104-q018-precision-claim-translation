@@ -1,0 +1,275 @@
+[
+  {
+    "event_id": "evt-018-001",
+    "event_type": "CONSENT_GRANTED",
+    "aggregate_type": "consent_grant",
+    "aggregate_id": "consent-c018",
+    "occurred_at": "2026-09-21T09:00:00+08:00",
+    "version": 1,
+    "summary": "捐献者 D-7781 签署广谱同意，覆盖研究、教学与临床用途",
+    "payload": {
+      "donor_ref": "D-7781",
+      "allowed_uses": ["research", "education", "clinical"]
+    }
+  },
+  {
+    "event_id": "evt-018-002",
+    "event_type": "DATA_AUTHORIZED",
+    "aggregate_type": "omics_release",
+    "aggregate_id": "omics-o018",
+    "occurred_at": "2026-09-21T10:00:00+08:00",
+    "version": 1,
+    "summary": "按同意范围发布肿瘤 scRNA-seq 数据 2026.09 版",
+    "payload": {
+      "data_type": "scRNA-seq",
+      "release_version": "2026.09",
+      "links": [{ "type": "consent_grant", "id": "consent-c018", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-003",
+    "event_type": "ANALYSIS_FROZEN",
+    "aggregate_type": "analysis_run",
+    "aggregate_id": "run-r018",
+    "occurred_at": "2026-09-22T14:00:00+08:00",
+    "version": 1,
+    "summary": "冻结单细胞分析流程与细胞类型模型版本",
+    "payload": {
+      "pipeline": "scrna-pipeline@3.1.0",
+      "model_version": "celltypist:hv2024.1",
+      "links": [{ "type": "omics_release", "id": "omics-o018", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-004",
+    "event_type": "CELL_SUBSET_DEFINED",
+    "aggregate_type": "cell_subset",
+    "aggregate_id": "subset-s018",
+    "occurred_at": "2026-09-22T15:00:00+08:00",
+    "version": 1,
+    "summary": "定义 CD8+ 耗竭样 T 细胞亚群（首版注释）",
+    "payload": {
+      "annotation": "CD8+ 耗竭样 T 细胞",
+      "links": [{ "type": "analysis_run", "id": "run-r018", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-005",
+    "event_type": "TARGET_PROPOSED",
+    "aggregate_type": "target_candidate",
+    "aggregate_id": "target-t018",
+    "occurred_at": "2026-09-23T09:30:00+08:00",
+    "version": 1,
+    "summary": "亚群高表达检查点分子 LAG3，提为候选靶点",
+    "payload": {
+      "symbol": "LAG3",
+      "links": [{ "type": "cell_subset", "id": "subset-s018", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-006",
+    "event_type": "MECHANISM_TESTED",
+    "aggregate_type": "mechanism_experiment",
+    "aggregate_id": "mech-m018",
+    "occurred_at": "2026-09-25T16:00:00+08:00",
+    "version": 1,
+    "summary": "类器官共培养中 LAG3 阻断恢复该亚群效应功能（支持性）",
+    "payload": {
+      "assay": "肿瘤类器官-CD8 共培养，LAG3 抗体阻断",
+      "finding": "supports",
+      "links": [{ "type": "target_candidate", "id": "target-t018", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-007",
+    "event_type": "CLINICAL_STUDY_RECORDED",
+    "aggregate_type": "clinical_study",
+    "aggregate_id": "study-n018",
+    "occurred_at": "2026-09-28T11:00:00+08:00",
+    "version": 1,
+    "summary": "登记 NCT00000018：LAG3 阻断在高表达人群的 II 期结果",
+    "payload": {
+      "study_ref": "NCT00000018",
+      "population": "LAG3 高表达晚期实体瘤",
+      "result_summary": "限定人群中应答率高于对照，总体生存数据未成熟",
+      "links": [{ "type": "target_candidate", "id": "target-t018", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-008",
+    "event_type": "STRATIFICATION_RULE_SET",
+    "aggregate_type": "stratification_rule",
+    "aggregate_id": "rule-r018",
+    "occurred_at": "2026-09-29T10:00:00+08:00",
+    "version": 1,
+    "summary": "建立 LAG3 获益人群分层规则 v1",
+    "payload": {
+      "rule_version": "v1",
+      "definition": "耗竭 CD8 中 LAG3+ 比例 ≥ 70% 且 ECOG ≤ 1",
+      "links": [{ "type": "clinical_study", "id": "study-n018", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-009",
+    "event_type": "CLAIM_PROPOSED",
+    "aggregate_type": "evidence_claim",
+    "aggregate_id": "claim-e018",
+    "occurred_at": "2026-09-29T14:00:00+08:00",
+    "version": 1,
+    "summary": "提出主张（假设级）：LAG3 阻断或为该亚群可干预方向",
+    "payload": {
+      "statement": "LAG3 阻断或为该细胞亚群的可干预方向（假设，待验证）",
+      "maturity": "HYPOTHESIS",
+      "open_questions": ["该亚群在原发灶与转移灶是否稳定存在"],
+      "links": [{ "type": "target_candidate", "id": "target-t018", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-010",
+    "event_type": "CLAIM_PROMOTED",
+    "aggregate_type": "evidence_claim",
+    "aggregate_id": "claim-e018",
+    "occurred_at": "2026-09-29T15:00:00+08:00",
+    "version": 2,
+    "summary": "晋升为单细胞关联级（仅统计关联，不作因果表述）",
+    "payload": {
+      "promoted_from": "HYPOTHESIS",
+      "promoted_to": "SINGLE_CELL_ASSOCIATION",
+      "reviewer": "研究员 周岚",
+      "statement": "在 run-r018 分析中，该亚群比例与 LAG3 表达及疗效信号呈关联（非因果）",
+      "links": [
+        { "type": "analysis_run", "id": "run-r018", "version": 1 },
+        { "type": "cell_subset", "id": "subset-s018", "version": 1 }
+      ]
+    }
+  },
+  {
+    "event_id": "evt-018-011",
+    "event_type": "CLAIM_PROMOTED",
+    "aggregate_type": "evidence_claim",
+    "aggregate_id": "claim-e018",
+    "occurred_at": "2026-09-29T16:00:00+08:00",
+    "version": 3,
+    "summary": "机制实验支持，晋升为机制级",
+    "payload": {
+      "promoted_from": "SINGLE_CELL_ASSOCIATION",
+      "promoted_to": "MECHANISTIC_SUPPORT",
+      "reviewer": "研究员 周岚",
+      "statement": "类器官实验支持 LAG3 阻断影响该亚群效应功能",
+      "links": [{ "type": "mechanism_experiment", "id": "mech-m018", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-012",
+    "event_type": "CLAIM_PROMOTED",
+    "aggregate_type": "evidence_claim",
+    "aggregate_id": "claim-e018",
+    "occurred_at": "2026-09-30T09:00:00+08:00",
+    "version": 4,
+    "summary": "临床研究结果纳入，晋升为临床证据级",
+    "payload": {
+      "promoted_from": "MECHANISTIC_SUPPORT",
+      "promoted_to": "CLINICAL_EVIDENCE",
+      "reviewer": "主治医师 陈屿",
+      "statement": "NCT00000018 中，LAG3 阻断在 LAG3 高表达人群中提高疗效，总生存数据未成熟",
+      "open_questions": ["总体生存数据未成熟", "联合用药安全性数据有限"],
+      "links": [{ "type": "clinical_study", "id": "study-n018", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-013",
+    "event_type": "CLAIM_PROMOTED",
+    "aggregate_type": "evidence_claim",
+    "aggregate_id": "claim-e018",
+    "occurred_at": "2026-09-30T10:00:00+08:00",
+    "version": 5,
+    "summary": "分层规则就位，晋升为可决策级",
+    "payload": {
+      "promoted_from": "CLINICAL_EVIDENCE",
+      "promoted_to": "ACTIONABLE",
+      "reviewer": "临床治理委员会 2026-09 例会",
+      "open_questions": ["总体生存数据未成熟", "联合用药安全性数据有限", "真实世界获益幅度待确认"],
+      "links": [{ "type": "stratification_rule", "id": "rule-r018", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-014",
+    "event_type": "USE_APPROVED",
+    "aggregate_type": "use_decision",
+    "aggregate_id": "decision-u018-edu",
+    "occurred_at": "2026-10-01T09:00:00+08:00",
+    "version": 1,
+    "summary": "治理官签署主张 v5 用于教学案例",
+    "payload": {
+      "intended_use": "education",
+      "signer": { "staff_id": "staff-gov-07", "role": "data_governance_officer" },
+      "claim_ref": { "type": "evidence_claim", "id": "claim-e018", "version": 5 }
+    }
+  },
+  {
+    "event_id": "evt-018-015",
+    "event_type": "USE_APPROVED",
+    "aggregate_type": "use_decision",
+    "aggregate_id": "decision-u018-clin",
+    "occurred_at": "2026-10-01T09:30:00+08:00",
+    "version": 1,
+    "summary": "持照医师签署主张 v5 用于限定人群的临床个人决策",
+    "payload": {
+      "intended_use": "clinical",
+      "signer": { "staff_id": "staff-md-114", "role": "licensed_physician" },
+      "applicable_population": "LAG3 高表达（耗竭 CD8 中 LAG3+ ≥ 70%）、ECOG ≤ 1 的晚期实体瘤",
+      "claim_ref": { "type": "evidence_claim", "id": "claim-e018", "version": 5 }
+    }
+  },
+  {
+    "event_id": "evt-018-016",
+    "event_type": "STATEMENT_PUBLISHED",
+    "aggregate_type": "external_statement",
+    "aggregate_id": "stmt-q018",
+    "occurred_at": "2026-10-02T08:00:00+08:00",
+    "version": 1,
+    "summary": "肿瘤免疫教学课程发布去标识案例，锚定签署版本",
+    "payload": {
+      "course_id": "COURSE-ONC-101",
+      "title": "案例：LAG3 高表达人群的证据链解读",
+      "statement_use": "education",
+      "claim_id": "claim-e018",
+      "claim_version": 5,
+      "signed_claim_version": 5,
+      "de_identified": true,
+      "links": [{ "type": "use_decision", "id": "decision-u018-edu", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-017",
+    "event_type": "MODEL_VERSIONED",
+    "aggregate_type": "analysis_run",
+    "aggregate_id": "run-r019",
+    "occurred_at": "2026-10-03T13:00:00+08:00",
+    "version": 1,
+    "summary": "细胞类型模型发布新版本，另起新 run；声明受影响主张与课程",
+    "payload": {
+      "new_model_version": "celltypist:hv2026.2",
+      "previous_model_version": "celltypist:hv2024.1",
+      "affected_claim_ids": ["claim-e018"],
+      "affected_course_ids": ["COURSE-ONC-101"],
+      "links": [{ "type": "analysis_run", "id": "run-r018", "version": 1 }]
+    }
+  },
+  {
+    "event_id": "evt-018-018",
+    "event_type": "CELL_SUBSET_REANNOTATED",
+    "aggregate_type": "cell_subset",
+    "aggregate_id": "subset-s018",
+    "occurred_at": "2026-10-04T10:00:00+08:00",
+    "version": 2,
+    "summary": "依新模型修订亚群注释为 v2，旧版本保留；声明受影响主张与课程",
+    "payload": {
+      "annotation": "CD8+ 组织驻留记忆样 T 细胞（修订）",
+      "previous_version": 1,
+      "affected_claim_ids": ["claim-e018"],
+      "affected_course_ids": ["COURSE-ONC-101"],
+      "links": [{ "type": "analysis_run", "id": "run-r019", "version": 1 }]
+    }
+  }
+]

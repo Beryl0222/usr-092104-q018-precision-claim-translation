@@ -1,9 +1,16 @@
 {
-  "event_id": "sample-018",
+  "event_id": "evt-sample-018",
   "event_type": "DATA_AUTHORIZED",
   "aggregate_type": "omics_release",
-  "aggregate_id": "aggregate-018",
+  "aggregate_id": "omics-sample-018",
   "occurred_at": "2026-09-20T12:00:00+08:00",
   "version": 1,
-  "summary": "精准医学主张转化领域样例"
+  "summary": "单事件信封联调样例：组学发布须锚定同意记录",
+  "payload": {
+    "data_type": "scRNA-seq",
+    "release_version": "2026.09",
+    "links": [
+      { "type": "consent_grant", "id": "consent-sample-018", "version": 1 }
+    ]
+  }
 }
