@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "精准医学主张转化领域事件",
+  "description": "信封与各事件 payload 形状。单事件结构由本 schema 约束；相关≠因果、逐级晋升、临床签署、撤回影响评估等跨事件规则由 src/validator.js 约束。",
   "type": "object",
   "required": [
     "event_id",
@@ -17,22 +18,46 @@
       "minLength": 1
     },
     "event_type": {
-      "type": "string",
       "enum": [
+        "CONSENT_GRANTED",
+        "CONSENT_WITHDRAWN",
         "DATA_AUTHORIZED",
         "ANALYSIS_FROZEN",
+        "MODEL_UPDATED",
+        "CELL_SUBSET_REGISTERED",
+        "TARGET_NOMINATED",
+        "MECHANISM_ASSAYED",
+        "CLINICAL_STUDY_RECORDED",
         "CLAIM_PROPOSED",
         "EVIDENCE_PROMOTED",
-        "USE_APPROVED"
+        "CLAIM_WITHDRAWN",
+        "ANNOTATION_REVISED",
+        "STRATIFICATION_RULE_PUBLISHED",
+        "USE_APPROVED",
+        "STATEMENT_PUBLISHED",
+        "COURSE_PUBLISHED",
+        "COURSE_SUPERSEDED",
+        "IMPACT_ASSESSED",
+        "GOVERNANCE_ALERT_RAISED"
       ]
     },
     "aggregate_type": {
-      "type": "string",
       "enum": [
+        "consent",
         "omics_release",
         "analysis_run",
+        "analysis_pipeline",
+        "cell_subset",
+        "candidate_target",
+        "mechanism_experiment",
+        "clinical_study",
         "evidence_claim",
-        "use_decision"
+        "stratification_rule",
+        "use_decision",
+        "external_statement",
+        "teaching_course",
+        "impact_assessment",
+        "governance_alert"
       ]
     },
     "aggregate_id": {
@@ -50,6 +75,1419 @@
     "summary": {
       "type": "string",
       "minLength": 1
+    },
+    "actor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "enum": [
+            "researcher",
+            "data_engineer",
+            "curator",
+            "qualified_clinician",
+            "governance_officer",
+            "teacher",
+            "system"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "role"
+      ],
+      "additionalProperties": false
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "CONSENT_GRANTED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "consent"
+          },
+          "payload": {
+            "$ref": "#/$defs/consentGranted"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "CONSENT_WITHDRAWN"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "consent"
+          },
+          "payload": {
+            "$ref": "#/$defs/withdrawal"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "DATA_AUTHORIZED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "omics_release"
+          },
+          "payload": {
+            "$ref": "#/$defs/dataAuthorized"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "ANALYSIS_FROZEN"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "analysis_run"
+          },
+          "payload": {
+            "$ref": "#/$defs/analysisFrozen"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "MODEL_UPDATED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "analysis_pipeline"
+          },
+          "payload": {
+            "$ref": "#/$defs/modelUpdated"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "CELL_SUBSET_REGISTERED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "cell_subset"
+          },
+          "payload": {
+            "$ref": "#/$defs/cellSubsetRegistered"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "TARGET_NOMINATED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "candidate_target"
+          },
+          "payload": {
+            "$ref": "#/$defs/targetNominated"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "MECHANISM_ASSAYED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "mechanism_experiment"
+          },
+          "payload": {
+            "$ref": "#/$defs/mechanismAssayed"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "CLINICAL_STUDY_RECORDED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "clinical_study"
+          },
+          "payload": {
+            "$ref": "#/$defs/clinicalStudyRecorded"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "CLAIM_PROPOSED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "evidence_claim"
+          },
+          "payload": {
+            "$ref": "#/$defs/claimProposed"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "EVIDENCE_PROMOTED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "evidence_claim"
+          },
+          "payload": {
+            "$ref": "#/$defs/evidencePromoted"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "CLAIM_WITHDRAWN"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "evidence_claim"
+          },
+          "payload": {
+            "$ref": "#/$defs/withdrawal"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "ANNOTATION_REVISED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "evidence_claim"
+          },
+          "payload": {
+            "$ref": "#/$defs/annotationRevised"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "STRATIFICATION_RULE_PUBLISHED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "stratification_rule"
+          },
+          "payload": {
+            "$ref": "#/$defs/stratificationRulePublished"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "USE_APPROVED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "use_decision"
+          },
+          "payload": {
+            "$ref": "#/$defs/useApproved"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "STATEMENT_PUBLISHED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "external_statement"
+          },
+          "payload": {
+            "$ref": "#/$defs/statementPublished"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "COURSE_PUBLISHED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "teaching_course"
+          },
+          "payload": {
+            "$ref": "#/$defs/coursePublished"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "COURSE_SUPERSEDED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "teaching_course"
+          },
+          "payload": {
+            "$ref": "#/$defs/courseSuperseded"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "IMPACT_ASSESSED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "impact_assessment"
+          },
+          "payload": {
+            "$ref": "#/$defs/impactAssessed"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "GOVERNANCE_ALERT_RAISED"
+          }
+        },
+        "required": [
+          "event_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "aggregate_type": {
+            "const": "governance_alert"
+          },
+          "payload": {
+            "$ref": "#/$defs/governanceAlertRaised"
+          }
+        },
+        "required": [
+          "payload"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "consentScope": {
+      "type": "string",
+      "description": "research=组学研究；teaching_deidentified=仅去标识教学案例；clinical=当前患者临床决策",
+      "enum": [
+        "research",
+        "teaching_deidentified",
+        "clinical"
+      ]
+    },
+    "maturityLevel": {
+      "type": "string",
+      "description": "M1 单细胞统计关联；M2 实验室机制支持；M3 临床研究证据；M4 个人决策就绪（须签署与适用人群）",
+      "enum": [
+        "M1",
+        "M2",
+        "M3",
+        "M4"
+      ]
+    },
+    "inferenceStrength": {
+      "type": "string",
+      "description": "statistical_association 不得由系统自动改写为 causal",
+      "enum": [
+        "statistical_association",
+        "mechanistically_supported",
+        "causal"
+      ]
+    },
+    "useKind": {
+      "type": "string",
+      "enum": [
+        "research",
+        "teaching",
+        "clinical"
+      ]
+    },
+    "provenanceRef": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "omics_release",
+            "analysis_run",
+            "cell_subset",
+            "candidate_target",
+            "mechanism_experiment",
+            "clinical_study"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "applicability": {
+      "type": "object",
+      "properties": {
+        "inclusion": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exclusion": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "inclusion",
+        "exclusion"
+      ],
+      "additionalProperties": false
+    },
+    "consentGranted": {
+      "type": "object",
+      "properties": {
+        "subject_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/consentScope"
+          },
+          "minItems": 1
+        },
+        "granted_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "subject_ref",
+        "scopes",
+        "granted_at"
+      ],
+      "additionalProperties": false
+    },
+    "dataAuthorized": {
+      "type": "object",
+      "properties": {
+        "consent_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dataset_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "omics_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "modality": {
+          "enum": [
+            "sc_rna",
+            "scratch_atac",
+            "spatial",
+            "bulk_wes",
+            "other"
+          ]
+        }
+      },
+      "required": [
+        "consent_id",
+        "dataset_ref",
+        "omics_version"
+      ],
+      "additionalProperties": false
+    },
+    "analysisFrozen": {
+      "type": "object",
+      "properties": {
+        "pipeline_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pipeline_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input_release_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "analysis_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "artifact_ref": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "pipeline_id",
+        "pipeline_version",
+        "input_release_ids",
+        "analysis_version"
+      ],
+      "additionalProperties": false
+    },
+    "modelUpdated": {
+      "type": "object",
+      "properties": {
+        "pipeline_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "from_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "to_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "replaces_run_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "pipeline_id",
+        "from_version",
+        "to_version",
+        "replaces_run_ids"
+      ],
+      "additionalProperties": false
+    },
+    "cellSubsetRegistered": {
+      "type": "object",
+      "properties": {
+        "analysis_run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subset_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "definition": {
+          "type": "string",
+          "minLength": 1
+        },
+        "annotation_version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "analysis_run_id",
+        "subset_key",
+        "definition",
+        "annotation_version"
+      ],
+      "additionalProperties": false
+    },
+    "targetNominated": {
+      "type": "object",
+      "properties": {
+        "subset_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "marker": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "subset_ids",
+        "marker",
+        "rationale"
+      ],
+      "additionalProperties": false
+    },
+    "mechanismAssayed": {
+      "type": "object",
+      "properties": {
+        "target_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assay_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result": {
+          "enum": [
+            "supports",
+            "partially_supports",
+            "refutes"
+          ]
+        },
+        "report_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "target_id",
+        "assay_type",
+        "result",
+        "report_ref"
+      ],
+      "additionalProperties": false
+    },
+    "clinicalStudyRecorded": {
+      "type": "object",
+      "properties": {
+        "study_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "design": {
+          "enum": [
+            "observational",
+            "phase1",
+            "phase2",
+            "phase3_rct",
+            "meta_analysis"
+          ]
+        },
+        "population": {
+          "type": "string",
+          "minLength": 1
+        },
+        "intervention": {
+          "type": "string",
+          "minLength": 1
+        },
+        "comparator": {
+          "type": "string"
+        },
+        "outcome": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result": {
+          "enum": [
+            "positive",
+            "negative",
+            "inconclusive"
+          ]
+        }
+      },
+      "required": [
+        "study_ref",
+        "design",
+        "population",
+        "intervention",
+        "outcome",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    "claimProposed": {
+      "type": "object",
+      "properties": {
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim_category": {
+          "enum": [
+            "biomarker_association",
+            "mechanism",
+            "predictive_efficacy",
+            "diagnostic",
+            "prognostic"
+          ]
+        },
+        "inference_strength": {
+          "$ref": "#/$defs/inferenceStrength"
+        },
+        "maturity_level": {
+          "$ref": "#/$defs/maturityLevel"
+        },
+        "provenance": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/provenanceRef"
+          },
+          "minItems": 1
+        },
+        "intended_uses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/useKind"
+          },
+          "minItems": 1
+        },
+        "applicability": {
+          "$ref": "#/$defs/applicability"
+        },
+        "asserted_by": {
+          "type": "object",
+          "properties": {
+            "person_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "role": {
+              "enum": [
+                "researcher",
+                "curator",
+                "qualified_clinician"
+              ]
+            }
+          },
+          "required": [
+            "person_id",
+            "role"
+          ],
+          "additionalProperties": false
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "statement",
+        "claim_category",
+        "inference_strength",
+        "maturity_level",
+        "provenance",
+        "intended_uses",
+        "unknowns"
+      ],
+      "additionalProperties": false
+    },
+    "evidencePromoted": {
+      "type": "object",
+      "properties": {
+        "from_level": {
+          "$ref": "#/$defs/maturityLevel"
+        },
+        "to_level": {
+          "$ref": "#/$defs/maturityLevel"
+        },
+        "promoted_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "supporting_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/provenanceRef"
+          }
+        },
+        "new_inference_strength": {
+          "$ref": "#/$defs/inferenceStrength"
+        }
+      },
+      "required": [
+        "from_level",
+        "to_level",
+        "promoted_by",
+        "rationale",
+        "supporting_refs"
+      ],
+      "additionalProperties": false
+    },
+    "withdrawal": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "annotationRevised": {
+      "type": "object",
+      "properties": {
+        "revision_of_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "new_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "changes": {
+          "type": "string",
+          "minLength": 1
+        },
+        "editor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "preserved_snapshot_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "revision_of_version",
+        "new_version",
+        "changes",
+        "editor",
+        "preserved_snapshot_ref"
+      ],
+      "additionalProperties": false
+    },
+    "stratificationRulePublished": {
+      "type": "object",
+      "properties": {
+        "claim_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "inclusion": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exclusion": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rule_logic": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "claim_id",
+        "claim_version",
+        "inclusion",
+        "exclusion",
+        "rule_logic"
+      ],
+      "additionalProperties": false
+    },
+    "useApproved": {
+      "type": "object",
+      "properties": {
+        "claim_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "use": {
+          "$ref": "#/$defs/useKind"
+        },
+        "decision": {
+          "enum": [
+            "approved",
+            "restricted",
+            "denied"
+          ]
+        },
+        "signer": {
+          "type": "object",
+          "properties": {
+            "person_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "role": {
+              "enum": [
+                "qualified_clinician",
+                "governance_officer",
+                "researcher"
+              ]
+            },
+            "license_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "person_id",
+            "role"
+          ],
+          "additionalProperties": false
+        },
+        "stratification_rule_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scope_population": {
+          "type": "string"
+        },
+        "valid_until": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "claim_id",
+        "claim_version",
+        "use",
+        "decision",
+        "signer"
+      ],
+      "additionalProperties": false
+    },
+    "statementPublished": {
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "minLength": 1
+        },
+        "use_context": {
+          "$ref": "#/$defs/useKind"
+        },
+        "claim_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "claim_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "wording": {
+          "type": "string",
+          "minLength": 1
+        },
+        "snapshot_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "channel",
+        "use_context",
+        "claim_id",
+        "claim_version",
+        "wording",
+        "snapshot_ref"
+      ],
+      "additionalProperties": false
+    },
+    "coursePublished": {
+      "type": "object",
+      "properties": {
+        "course_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "access": {
+          "const": "deidentified_only"
+        },
+        "deidentified_case_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "claim_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "claim_version": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "claim_id",
+              "claim_version"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "course_id",
+        "title",
+        "access",
+        "deidentified_case_ids",
+        "refs"
+      ],
+      "additionalProperties": false
+    },
+    "courseSuperseded": {
+      "type": "object",
+      "properties": {
+        "course_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "new_course_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "course_id",
+        "new_course_id",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "impactAssessed": {
+      "type": "object",
+      "properties": {
+        "trigger_event_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trigger_type": {
+          "enum": [
+            "data_withdrawal",
+            "annotation_revision",
+            "model_update"
+          ]
+        },
+        "affected": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "enum": [
+                  "claim",
+                  "course",
+                  "statement",
+                  "use_decision"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "action": {
+                "enum": [
+                  "revalidate",
+                  "retract_reference",
+                  "restrict_use",
+                  "none"
+                ]
+              }
+            },
+            "required": [
+              "kind",
+              "id",
+              "version",
+              "action"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "preserved_snapshots": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "of": {
+                "enum": [
+                  "claim",
+                  "statement",
+                  "course",
+                  "analysis_run"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "of",
+              "id",
+              "version",
+              "ref"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "actions_required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "trigger_event_id",
+        "trigger_type",
+        "affected",
+        "preserved_snapshots",
+        "actions_required"
+      ],
+      "additionalProperties": false
+    },
+    "governanceAlertRaised": {
+      "type": "object",
+      "properties": {
+        "alert_code": {
+          "type": "string",
+          "enum": [
+            "association_worded_as_causal",
+            "research_claim_used_for_treatment",
+            "clinical_use_unsigned",
+            "clinical_use_below_m4",
+            "use_outside_approved_population",
+            "teaching_identifiable_data",
+            "stale_or_withdrawn_claim_cited",
+            "maturity_skip"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "blocker"
+          ]
+        },
+        "ref_event_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "alert_code",
+        "severity",
+        "ref_event_ids",
+        "detail"
+      ],
+      "additionalProperties": false
     }
   },
   "additionalProperties": true

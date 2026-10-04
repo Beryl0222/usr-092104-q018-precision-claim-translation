@@ -1,0 +1,440 @@
+[
+  {
+    "event_id": "evt-001",
+    "event_type": "CONSENT_GRANTED",
+    "aggregate_type": "consent",
+    "aggregate_id": "consent-C001",
+    "occurred_at": "2026-09-01T09:00:00+08:00",
+    "version": 1,
+    "summary": "患者 P-7 签署组学研究、去标识教学与当前患者临床决策范围同意",
+    "actor": { "id": "staff-12", "role": "curator" },
+    "payload": {
+      "subject_ref": "P-7",
+      "scopes": ["research", "teaching_deidentified", "clinical"],
+      "granted_at": "2026-09-01T09:00:00+08:00",
+      "expires_at": "2028-09-01T09:00:00+08:00"
+    }
+  },
+  {
+    "event_id": "evt-002",
+    "event_type": "DATA_AUTHORIZED",
+    "aggregate_type": "omics_release",
+    "aggregate_id": "rel-R001",
+    "occurred_at": "2026-09-02T10:00:00+08:00",
+    "version": 1,
+    "summary": "授权 P-7 的单细胞转录组发布用于研究",
+    "payload": {
+      "consent_id": "consent-C001",
+      "dataset_ref": "dataset/scrna/P-7",
+      "omics_version": 1,
+      "modality": "sc_rna"
+    }
+  },
+  {
+    "event_id": "evt-003",
+    "event_type": "ANALYSIS_FROZEN",
+    "aggregate_type": "analysis_run",
+    "aggregate_id": "run-A001",
+    "occurred_at": "2026-09-03T11:00:00+08:00",
+    "version": 1,
+    "summary": "聚类与注释流程冻结，输入 rel-R001",
+    "payload": {
+      "pipeline_id": "scr-cluster",
+      "pipeline_version": "3.1.0",
+      "input_release_ids": ["rel-R001"],
+      "analysis_version": 1,
+      "artifact_ref": "artifacts/run-A001"
+    }
+  },
+  {
+    "event_id": "evt-004",
+    "event_type": "CELL_SUBSET_REGISTERED",
+    "aggregate_type": "cell_subset",
+    "aggregate_id": "subset-S001",
+    "occurred_at": "2026-09-03T12:00:00+08:00",
+    "version": 1,
+    "summary": "登记耗竭样 CD8 T 细胞亚群",
+    "payload": {
+      "analysis_run_id": "run-A001",
+      "subset_key": "CD8_T_exhausted_like",
+      "definition": "PDCD1+LAG3+TOX+ CD8 T 细胞群",
+      "annotation_version": 1
+    }
+  },
+  {
+    "event_id": "evt-005",
+    "event_type": "TARGET_NOMINATED",
+    "aggregate_type": "candidate_target",
+    "aggregate_id": "target-T001",
+    "occurred_at": "2026-09-04T09:30:00+08:00",
+    "version": 1,
+    "summary": "基于亚群标志物提出候选靶点 LAG3",
+    "payload": {
+      "subset_ids": ["subset-S001"],
+      "marker": "LAG3",
+      "rationale": "该亚群 LAG3 表达显著高于其他 CD8 亚群"
+    }
+  },
+  {
+    "event_id": "evt-006",
+    "event_type": "MECHANISM_ASSAYED",
+    "aggregate_type": "mechanism_experiment",
+    "aggregate_id": "mech-M001",
+    "occurred_at": "2026-09-10T15:00:00+08:00",
+    "version": 1,
+    "summary": "CRISPR 敲减与类器官共培养实验支持 LAG3 的功能作用",
+    "payload": {
+      "target_id": "target-T001",
+      "assay_type": "CRISPR_knockdown_organoid_coculture",
+      "result": "supports",
+      "report_ref": "reports/mech-M001"
+    }
+  },
+  {
+    "event_id": "evt-007",
+    "event_type": "CLINICAL_STUDY_RECORDED",
+    "aggregate_type": "clinical_study",
+    "aggregate_id": "study-ST001",
+    "occurred_at": "2026-09-12T10:00:00+08:00",
+    "version": 1,
+    "summary": "登记一项观察性研究：LAG3 高表达与缓解相关",
+    "payload": {
+      "study_ref": "NCT00000001",
+      "design": "observational",
+      "population": "MSI-H 结直肠癌",
+      "intervention": "抗 LAG3 联合治疗",
+      "comparator": "标准治疗",
+      "outcome": "客观缓解率",
+      "result": "positive"
+    }
+  },
+  {
+    "event_id": "evt-008",
+    "event_type": "CLINICAL_STUDY_RECORDED",
+    "aggregate_type": "clinical_study",
+    "aggregate_id": "study-ST002",
+    "occurred_at": "2026-09-15T10:00:00+08:00",
+    "version": 1,
+    "summary": "登记 II 期研究：限定人群中客观缓解率阳性",
+    "payload": {
+      "study_ref": "NCT00000002",
+      "design": "phase2",
+      "population": "LAG3 高表达 MSI-H 结直肠癌",
+      "intervention": "抗 LAG3 联合治疗",
+      "comparator": "标准治疗",
+      "outcome": "客观缓解率",
+      "result": "positive"
+    }
+  },
+  {
+    "event_id": "evt-009",
+    "event_type": "CLAIM_PROPOSED",
+    "aggregate_type": "evidence_claim",
+    "aggregate_id": "claim-CL001",
+    "occurred_at": "2026-09-16T10:00:00+08:00",
+    "version": 1,
+    "summary": "提出 M1 单细胞关联主张（统计相关，非因果）",
+    "actor": { "id": "researcher-07", "role": "researcher" },
+    "payload": {
+      "statement": "在 MSI-H 结直肠癌样本中，耗竭样 CD8 T 细胞亚群的 LAG3 高表达与抗 LAG3 治疗缓解呈正相关；该结果为单细胞统计关联，提示潜在方向，尚不能推断因果。",
+      "claim_category": "biomarker_association",
+      "inference_strength": "statistical_association",
+      "maturity_level": "M1",
+      "provenance": [
+        { "kind": "cell_subset", "id": "subset-S001", "version": 1 },
+        { "kind": "analysis_run", "id": "run-A001", "version": 1 }
+      ],
+      "intended_uses": ["research", "teaching"],
+      "applicability": {
+        "inclusion": ["MSI-H 结直肠癌", "LAG3_high"],
+        "exclusion": ["既往抗 LAG3 治疗"]
+      },
+      "asserted_by": { "person_id": "researcher-07", "role": "researcher" },
+      "unknowns": ["缺乏随机对照证据", "cutoff 未跨队列验证", "长期生存结局未知"]
+    }
+  },
+  {
+    "event_id": "evt-010",
+    "event_type": "ANNOTATION_REVISED",
+    "aggregate_type": "evidence_claim",
+    "aggregate_id": "claim-CL001",
+    "occurred_at": "2026-09-17T10:00:00+08:00",
+    "version": 2,
+    "summary": "审校者补充亚群定义措辞，v1 快照保留",
+    "actor": { "id": "curator-02", "role": "curator" },
+    "payload": {
+      "revision_of_version": 1,
+      "new_version": 2,
+      "changes": "在亚群定义中注明注释版本 annotation_version=1，未改变结论方向",
+      "editor": "curator-02",
+      "preserved_snapshot_ref": "snapshots/claim-CL001/v1"
+    }
+  },
+  {
+    "event_id": "evt-011",
+    "event_type": "IMPACT_ASSESSED",
+    "aggregate_type": "impact_assessment",
+    "aggregate_id": "ia-I001",
+    "occurred_at": "2026-09-17T10:30:00+08:00",
+    "version": 1,
+    "summary": "注释修订影响评估：仅主张自身需复核，尚无对外发表物",
+    "payload": {
+      "trigger_event_id": "evt-010",
+      "trigger_type": "annotation_revision",
+      "affected": [
+        { "kind": "claim", "id": "claim-CL001", "version": 1, "action": "revalidate" }
+      ],
+      "preserved_snapshots": [],
+      "actions_required": ["复核 v1 时期的内部引用"]
+    }
+  },
+  {
+    "event_id": "evt-012",
+    "event_type": "EVIDENCE_PROMOTED",
+    "aggregate_type": "evidence_claim",
+    "aggregate_id": "claim-CL001",
+    "occurred_at": "2026-09-18T09:00:00+08:00",
+    "version": 3,
+    "summary": "机制实验支持，主张 M1 晋升 M2",
+    "actor": { "id": "researcher-07", "role": "researcher" },
+    "payload": {
+      "from_level": "M1",
+      "to_level": "M2",
+      "promoted_by": "researcher-07",
+      "rationale": "体外功能实验支持 LAG3 在该亚群中的功能作用",
+      "supporting_refs": [
+        { "kind": "mechanism_experiment", "id": "mech-M001", "version": 1 }
+      ]
+    }
+  },
+  {
+    "event_id": "evt-013",
+    "event_type": "EVIDENCE_PROMOTED",
+    "aggregate_type": "evidence_claim",
+    "aggregate_id": "claim-CL001",
+    "occurred_at": "2026-09-19T09:00:00+08:00",
+    "version": 4,
+    "summary": "观察性临床研究证据，M2 晋升 M3，推断强度由人工升级为机制支持",
+    "actor": { "id": "curator-02", "role": "curator" },
+    "payload": {
+      "from_level": "M2",
+      "to_level": "M3",
+      "promoted_by": "curator-02",
+      "rationale": "已有登记临床研究观察到人群水平关联，结合机制实验",
+      "new_inference_strength": "mechanistically_supported",
+      "supporting_refs": [
+        { "kind": "clinical_study", "id": "study-ST001", "version": 1 },
+        { "kind": "mechanism_experiment", "id": "mech-M001", "version": 1 }
+      ]
+    }
+  },
+  {
+    "event_id": "evt-014",
+    "event_type": "EVIDENCE_PROMOTED",
+    "aggregate_type": "evidence_claim",
+    "aggregate_id": "claim-CL001",
+    "occurred_at": "2026-09-20T09:00:00+08:00",
+    "version": 5,
+    "summary": "阳性 II 期证据与限定人群齐备，M3 晋升 M4，具备临床签署资格",
+    "actor": { "id": "dr-gao", "role": "qualified_clinician" },
+    "payload": {
+      "from_level": "M3",
+      "to_level": "M4",
+      "promoted_by": "dr-gao",
+      "rationale": "II 期研究在限定人群中取得阳性结果，适用人群已界定",
+      "supporting_refs": [
+        { "kind": "clinical_study", "id": "study-ST002", "version": 1 },
+        { "kind": "mechanism_experiment", "id": "mech-M001", "version": 1 }
+      ]
+    }
+  },
+  {
+    "event_id": "evt-015",
+    "event_type": "STRATIFICATION_RULE_PUBLISHED",
+    "aggregate_type": "stratification_rule",
+    "aggregate_id": "rule-R001",
+    "occurred_at": "2026-09-21T09:00:00+08:00",
+    "version": 1,
+    "summary": "发布与 claim-CL001 v2 绑定的临床分层规则",
+    "payload": {
+      "claim_id": "claim-CL001",
+      "claim_version": 2,
+      "inclusion": ["MSI-H 结直肠癌", "LAG3_high"],
+      "exclusion": ["既往抗 LAG3 治疗"],
+      "rule_logic": "MSI-H AND LAG3_high AND NOT(既往抗 LAG3 治疗)"
+    }
+  },
+  {
+    "event_id": "evt-016",
+    "event_type": "USE_APPROVED",
+    "aggregate_type": "use_decision",
+    "aggregate_id": "decision-U001",
+    "occurred_at": "2026-09-22T09:00:00+08:00",
+    "version": 1,
+    "summary": "合格临床医师对当前患者在限定人群内签署临床用途，有效期一年",
+    "actor": { "id": "dr-gao", "role": "qualified_clinician" },
+    "payload": {
+      "claim_id": "claim-CL001",
+      "claim_version": 2,
+      "use": "clinical",
+      "decision": "approved",
+      "signer": { "person_id": "dr-gao", "role": "qualified_clinician", "license_id": "CLI-2016-0312" },
+      "stratification_rule_id": "rule-R001",
+      "scope_population": "MSI-H 且 LAG3 高表达、既往未接受抗 LAG3 治疗的结直肠癌患者",
+      "valid_until": "2027-09-22T09:00:00+08:00"
+    }
+  },
+  {
+    "event_id": "evt-017",
+    "event_type": "STATEMENT_PUBLISHED",
+    "aggregate_type": "external_statement",
+    "aggregate_id": "stmt-PS001",
+    "occurred_at": "2026-09-23T09:00:00+08:00",
+    "version": 1,
+    "summary": "在临床会诊纪要模板中发表限定人群表述，钉住 v2 与快照",
+    "actor": { "id": "dr-gao", "role": "qualified_clinician" },
+    "payload": {
+      "channel": "临床会诊纪要模板",
+      "use_context": "clinical",
+      "claim_id": "claim-CL001",
+      "claim_version": 2,
+      "wording": "在 LAG3 高表达且 MSI-H、既往未使用抗 LAG3 的结直肠癌患者中，现有 II 期阳性证据提示联合抗 LAG3 治疗可能提高客观缓解率；该表述仅限上述人群，长期生存等未知项仍存在，不构成普遍治疗建议。",
+      "snapshot_ref": "snapshots/claim-CL001/v2"
+    }
+  },
+  {
+    "event_id": "evt-018",
+    "event_type": "COURSE_PUBLISHED",
+    "aggregate_type": "teaching_course",
+    "aggregate_id": "course-E001",
+    "occurred_at": "2026-09-25T09:00:00+08:00",
+    "version": 1,
+    "summary": "发布去标识教学课程，引用 claim-CL001 v2",
+    "actor": { "id": "teacher-03", "role": "teacher" },
+    "payload": {
+      "course_id": "course-E001",
+      "title": "从单细胞关联到临床证据：LAG3 案例",
+      "access": "deidentified_only",
+      "deidentified_case_ids": ["case-DI-772"],
+      "refs": [
+        { "claim_id": "claim-CL001", "claim_version": 2 }
+      ]
+    }
+  },
+  {
+    "event_id": "evt-019",
+    "event_type": "MODEL_UPDATED",
+    "aggregate_type": "analysis_pipeline",
+    "aggregate_id": "scr-cluster",
+    "occurred_at": "2026-09-28T09:00:00+08:00",
+    "version": 1,
+    "summary": "聚类流程 3.1.0 升级 3.2.0，替换 run-A001 的结果",
+    "actor": { "id": "dataeng-05", "role": "data_engineer" },
+    "payload": {
+      "pipeline_id": "scr-cluster",
+      "from_version": "3.1.0",
+      "to_version": "3.2.0",
+      "replaces_run_ids": ["run-A001"]
+    }
+  },
+  {
+    "event_id": "evt-020",
+    "event_type": "IMPACT_ASSESSED",
+    "aggregate_type": "impact_assessment",
+    "aggregate_id": "ia-I002",
+    "occurred_at": "2026-09-28T11:00:00+08:00",
+    "version": 1,
+    "summary": "模型更新影响评估：指出受影响主张、课程、表述与临床决定，保留已发表版本",
+    "actor": { "id": "gov-01", "role": "governance_officer" },
+    "payload": {
+      "trigger_event_id": "evt-019",
+      "trigger_type": "model_update",
+      "affected": [
+        { "kind": "claim", "id": "claim-CL001", "version": 2, "action": "revalidate" },
+        { "kind": "statement", "id": "stmt-PS001", "version": 1, "action": "revalidate" },
+        { "kind": "course", "id": "course-E001", "version": 1, "action": "revalidate" },
+        { "kind": "use_decision", "id": "decision-U001", "version": 1, "action": "revalidate" }
+      ],
+      "preserved_snapshots": [
+        { "of": "claim", "id": "claim-CL001", "version": 2, "ref": "snapshots/claim-CL001/v2" },
+        { "of": "analysis_run", "id": "run-A001", "version": 1, "ref": "artifacts/run-A001" }
+      ],
+      "actions_required": [
+        "用 scr-cluster 3.2.0 重跑并复核 claim-CL001",
+        "课程 course-E001 在复核完成前加注版本说明",
+        "已发表表述 stmt-PS001 永久保留 v2 快照，不被重算结果覆盖"
+      ]
+    }
+  },
+  {
+    "event_id": "evt-021",
+    "event_type": "CONSENT_WITHDRAWN",
+    "aggregate_type": "consent",
+    "aggregate_id": "consent-C001",
+    "occurred_at": "2026-10-01T09:00:00+08:00",
+    "version": 2,
+    "summary": "患者撤回同意，停止新增使用并评估既有产物",
+    "actor": { "id": "staff-12", "role": "curator" },
+    "payload": {
+      "reason": "患者书面撤回全部范围同意"
+    }
+  },
+  {
+    "event_id": "evt-022",
+    "event_type": "IMPACT_ASSESSED",
+    "aggregate_type": "impact_assessment",
+    "aggregate_id": "ia-I003",
+    "occurred_at": "2026-10-01T10:00:00+08:00",
+    "version": 1,
+    "summary": "撤回影响评估：冻结新增临床与教学使用，已发表版本按规保留备查",
+    "actor": { "id": "gov-01", "role": "governance_officer" },
+    "payload": {
+      "trigger_event_id": "evt-021",
+      "trigger_type": "data_withdrawal",
+      "affected": [
+        { "kind": "claim", "id": "claim-CL001", "version": 2, "action": "restrict_use" },
+        { "kind": "statement", "id": "stmt-PS001", "version": 1, "action": "restrict_use" },
+        { "kind": "course", "id": "course-E001", "version": 1, "action": "retract_reference" },
+        { "kind": "use_decision", "id": "decision-U001", "version": 1, "action": "restrict_use" }
+      ],
+      "preserved_snapshots": [
+        { "of": "claim", "id": "claim-CL001", "version": 2, "ref": "snapshots/claim-CL001/v2" }
+      ],
+      "actions_required": [
+        "停止 claim-CL001 的一切新增使用",
+        "课程 course-E001 撤下相关案例引用",
+        "通知签署人 dr-gao 该临床决定对应的主张数据来源已撤回",
+        "已发表表述与签署记录保留 v2 快照用于审计，不用于新决策"
+      ]
+    }
+  },
+  {
+    "event_id": "evt-023",
+    "event_type": "CLAIM_WITHDRAWN",
+    "aggregate_type": "evidence_claim",
+    "aggregate_id": "claim-CL001",
+    "occurred_at": "2026-10-01T11:00:00+08:00",
+    "version": 6,
+    "summary": "因来源数据撤回，主张整体撤回",
+    "actor": { "id": "gov-01", "role": "governance_officer" },
+    "payload": {
+      "reason": "来源样本 consent-C001 撤回同意，影响评估 ia-I003 要求限制使用"
+    }
+  },
+  {
+    "event_id": "evt-024",
+    "event_type": "GOVERNANCE_ALERT_RAISED",
+    "aggregate_type": "governance_alert",
+    "aggregate_id": "alert-GA001",
+    "occurred_at": "2026-10-01T11:30:00+08:00",
+    "version": 1,
+    "summary": "治理巡检登记：撤回后须确认课程下线与临床冻结执行",
+    "actor": { "id": "gov-01", "role": "governance_officer" },
+    "payload": {
+      "alert_code": "stale_or_withdrawn_claim_cited",
+      "severity": "warning",
+      "ref_event_ids": ["evt-023", "evt-018", "evt-016"],
+      "detail": "claim-CL001 已撤回；课程 course-E001 需完成下线，临床决定 decision-U001 冻结用于新患者"
+    }
+  }
+]

@@ -2,8 +2,18 @@
   "event_id": "sample-018",
   "event_type": "DATA_AUTHORIZED",
   "aggregate_type": "omics_release",
-  "aggregate_id": "aggregate-018",
+  "aggregate_id": "rel-sample-018",
   "occurred_at": "2026-09-20T12:00:00+08:00",
   "version": 1,
-  "summary": "精准医学主张转化领域样例"
+  "summary": "单事件联调样例：组学发布须有有效同意（跨事件校验见 lifecycle.json）",
+  "actor": {
+    "id": "dataeng-05",
+    "role": "data_engineer"
+  },
+  "payload": {
+    "consent_id": "consent-sample-018",
+    "dataset_ref": "dataset/scrna/sample-018",
+    "omics_version": 1,
+    "modality": "sc_rna"
+  }
 }
